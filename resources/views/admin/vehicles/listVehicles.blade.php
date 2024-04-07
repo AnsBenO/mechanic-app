@@ -27,79 +27,71 @@
                             </thead>
                             <tbody>
                                 @foreach ($vehicles as $vehicle)
-                                <tr>
-                                    <td>{{ $vehicle->id }}</td>
-                                    <td>{{ $vehicle->make }}</td>
-                                    <td>{{ $vehicle->model }}</td>
-                                    <td>{{ $vehicle->fuelType }}</td>
-                                    <td>{{ $vehicle->registration }}</td>
-                                    <td>
-                                        <a href="{{ route('vehicles.edit', $vehicle) }}" class="btn btn-sm btn-info">Edit</a>
-                                        <button type="button" class="btn btn-sm btn-danger delete-btn" data-vehicle-id="{{ $vehicle->id }}">Delete</button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            
-                            <!-- Modal -->
-                            <div id="deleteModal" class="modal">
-                                <div class="modal-content">
-                                    <span class="close">&times;</span>
-                                    <p>Are you sure you want to delete this vehicle?</p>
-                                    <button id="confirmDeleteBtn">Delete</button>
-                                </div>
-                            </div>
-                            
-                            <script>
-                                var modal = document.getElementById("deleteModal");
-                            
-                                var deleteButtons = document.querySelectorAll('.delete-btn');
-                            
-                                var closeButton = document.getElementsByClassName("close")[0];
-                            
-                                deleteButtons.forEach(function(btn) {
-                                    btn.onclick = function() {
-                                        modal.style.display = "block";
-                                    }
-                                });
-                            
-                                closeButton.onclick = function() {
-                                    modal.style.display = "none";
-                                }
-                            
-                                window.onclick = function(event) {
-                                    if (event.target == modal) {
+                                    <tr>
+                                        <td>{{ $vehicle->id }}</td>
+                                        <td>{{ $vehicle->make }}</td>
+                                        <td>{{ $vehicle->model }}</td>
+                                        <td>{{ $vehicle->fuelType }}</td>
+                                        <td>{{ $vehicle->registration }}</td>
+                                        <td>
+                                            <a href="{{ route('vehicles.edit', $vehicle) }}"
+                                                class="btn btn-sm btn-info">Edit</a>
+                                            <button type="button" class="btn btn-sm btn-danger delete-btn"
+                                                data-vehicle-id="{{ $vehicle->id }}">Delete</button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+                              @include('admin.modals.deleteVehicle')
+
+                                <script>
+                                    var modal = document.getElementById("deleteModal");
+
+                                    var deleteButtons = document.querySelectorAll('.delete-btn');
+
+                                    var closeButton = document.getElementsByClassName("close")[0];
+
+                                    deleteButtons.forEach(function(btn) {
+                                        btn.onclick = function() {
+                                            modal.style.display = "block";
+                                        }
+                                    });
+
+                                    closeButton.onclick = function() {
                                         modal.style.display = "none";
                                     }
-                                }
-                            
-                                document.getElementById("confirmDeleteBtn").onclick = function() {
-    // Get the vehicle ID from the delete button's data attribute
-    var vehicleId = document.querySelector('.delete-btn').getAttribute('data-vehicle-id');
 
-    // Send a DELETE request using AJAX
-    fetch(`/vehicles/${vehicleId}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}', 
-        },
-    })
-    .then(response => {
-        if (response.ok) {
-            window.location.reload();
-        } else {
-            alert('Failed to delete vehicle');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to delete vehicle');
-    });
+                                    window.onclick = function(event) {
+                                        if (event.target == modal) {
+                                            modal.style.display = "none";
+                                        }
+                                    }
 
-    modal.style.display = "none";
-}
+                                    document.getElementById("confirmDeleteBtn").onclick = function() {
+                                        var vehicleId = document.querySelector('.delete-btn').getAttribute('data-vehicle-id');
 
-                            </script>
+                                        fetch(`/vehicles/${vehicleId}`, {
+                                                method: 'DELETE',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                },
+                                            })
+                                            .then(response => {
+                                                if (response.ok) {
+                                                    window.location.reload();
+                                                } else {
+                                                    alert('Failed to delete vehicle');
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                alert('Failed to delete vehicle');
+                                            });
+
+                                        modal.style.display = "none";
+                                    }
+                                </script>
                             </tbody>
                         </table>
                         {{ $vehicles->links() }}
