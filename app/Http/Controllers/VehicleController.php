@@ -36,7 +36,6 @@ class VehicleController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the incoming request data
         $validatedData = $request->validate([
             'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
@@ -71,7 +70,6 @@ class VehicleController extends Controller
      */
     public function edit(Request $request, Vehicle $vehicle)
     {
-        // Validate the incoming request data
         $validatedData = $request->validate([
             'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
@@ -87,15 +85,28 @@ class VehicleController extends Controller
     }
 
     /**
-     * Remove the specified client from storage.
+     * Remove the specified vehicle from storage.
      *
-     * @param  \App\Models\Vehicle  
+     * @param  int  $vehicleId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Vehicle $vehicle)
+    public function destroy($vehicleId)
     {
+        $vehicle = Vehicle::findOrFail($vehicleId);
+
         $vehicle->delete();
 
-        return redirect()->route('admin.vehicles.listVehicles')->with('success', 'vehicle deleted successfully.');
+        // return redirect()->route('admin.vehicles.listVehicles')->with('success', 'Vehicle deleted successfully.');
+    }
+
+    /**
+     * Show the modal for removing a vehicle.
+     *
+     * @param int $vehicleId
+     * @return \Illuminate\View\View
+     */
+    public function showDelete($vehicleId)
+    {
+        return view('admin.modals.deleteVehicle', compact('vehicleId'));
     }
 }

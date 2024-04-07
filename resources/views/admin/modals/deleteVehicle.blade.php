@@ -8,50 +8,40 @@
         <div class="modal-body">
             <form id="deleteForm">
                 @csrf
-                <input type="hidden" id="deleteId" name="deleteId" />
-                <p>Are you sure you want to delete this vehicle?</p>
+                <input type="hidden" id="deleteId" name="deleteId" value="{{ $vehicleId }}" />
+                <p>Are you sure you want to delete this vehicle {{ $vehicleId }}?</p>
             </form>
         </div>
         <div class="modal-footer">
-            <button id="delete-button" class="btn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
-            <button id="cancel-button" class="btn bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+            <button id="delete-button"
+                class="btn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
+            <button id="cancel-button"
+                class="btn bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
         </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var modal = document.getElementById("modal");
-        modal.style.display = 'hidden';
-        var closeModal = document.getElementById("close-modal");
-        var deleteButton = document.getElementById("delete-button");
-        var cancelButton = document.getElementById("cancel-button");
-        var deleteIdInput = document.getElementById("deleteId");
+    $(document).ready(function() {
+        $("#delete-button").click(function() {
+            var vehicleId = $("#deleteId").val();
 
-        closeModal.addEventListener("click", function() {
-            modal.style.display = "none";
-        });
-
-        cancelButton.addEventListener("click", function() {
-            modal.style.display = "none";
-        });
-
-        deleteButton.addEventListener("click", function() {
-            var formData = new FormData(document.getElementById('deleteForm'));
-            axios.delete('{{ route("vehicles.destroy") }}', formData)
-                .then(function (response) {
-                    if(response.data == "ok") {
-                        var rowToDelete = document.getElementById("row" + deleteIdInput.value);
-                        if (rowToDelete) {
-                            rowToDelete.remove();
-                        }
-                    }
-                })
-                .catch(function (error) {
+            $.ajax({
+                url: `/vehicles/${vehicleId}`,
+                type: 'DELETE',
+                data: {
+                    "_token": "{{ csrf_token() }}"
+                },
+                success: function(response) {
+                    window.location.reload();
+                },
+                error: function(error) {
                     console.error(error);
-                });
-
-            modal.style.display = "none";
+                }
+            });
+        });
+        $("#close-modal, #cancel-button").click(function() {
+            $("#modal").hide();
         });
     });
 </script>

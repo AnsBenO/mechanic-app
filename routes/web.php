@@ -39,7 +39,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('/vehicles/create', [VehicleController::class, 'store'])->name('store');;
         Route::get('/vehicles/{vehicle}/edit', [VehicleController::class, 'showEdit'])->name('edit');
         Route::put('/vehicles/{vehicle}', [VehicleController::class, 'edit']);
-        Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])->name('destroy');
+        Route::get('/vehicles/delete/{id}', [VehicleController::class, 'showDelete']);
+        Route::delete('/vehicles/{vehicleId}', [VehicleController::class, 'destroy'])->name('destroy');
     });
 });
 
