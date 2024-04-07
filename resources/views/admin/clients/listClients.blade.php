@@ -14,7 +14,7 @@
                     @if ($clients->isEmpty())
                         <p>No clients found.</p>
                     @else
-                        <table class="table">
+                        <table class="table min-w-full">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -22,7 +22,6 @@
                                     <th>Last Name</th>
                                     <th>Address</th>
                                     <th>Phone Number</th>
-                                    <!-- Add more table headers as needed -->
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -34,10 +33,8 @@
                                         <td>{{ $client->lastName }}</td>
                                         <td>{{ $client->address }}</td>
                                         <td>{{ $client->phoneNumber }}</td>
-                                        <!-- Add more table cells as needed -->
                                         <td>
                                             <a href="{{ route('clients.edit', $client) }}" class="btn btn-sm btn-info">Edit</a>                                            
-                                            <!-- Add delete button with form submission if needed -->                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
