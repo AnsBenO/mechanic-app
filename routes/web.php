@@ -22,7 +22,7 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
-    // Clients Routes
+    //? Clients Routes
     Route::name('clients.')->group(function () {
         Route::get('/clients', [ClientController::class, 'index'])->name('index');
         Route::get('/clients/create', [ClientController::class, 'create'])->name('create');
@@ -32,7 +32,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('destroy');
     });
 
-    // Vehicles Routes
+    //? Vehicles Routes
     Route::name('vehicles.')->group(function () {
         Route::get('/vehicles', [VehicleController::class, 'index'])->name('index');
         Route::get('/vehicles/create', [VehicleController::class, 'create'])->name('create');
@@ -41,6 +41,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::put('/vehicles/{vehicle}', [VehicleController::class, 'edit']);
         Route::get('/vehicles/delete/{id}', [VehicleController::class, 'showDelete']);
         Route::delete('/vehicles/{vehicleId}', [VehicleController::class, 'destroy'])->name('destroy');
+        Route::get('/vehicles/search', [VehicleController::class, 'search'])->name('search');
     });
 });
 
@@ -54,4 +55,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require_once __DIR__ . '/auth.php';

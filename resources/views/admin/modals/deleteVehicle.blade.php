@@ -1,5 +1,4 @@
-<div id="modal" class="modal fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50"
-    data-aos="fade-down">
+<div id="deleteModal" class="modal fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50" data-aos="fade-down">
     <!-- Modal content -->
     <div id="modal-content" class="modal-content bg-white dark:bg-gray-800 shadow-xl px-1 rounded-lg">
         <div class="flex justify-end">
@@ -27,12 +26,12 @@
                     @csrf
                     <input type="hidden" id="deleteId" name="deleteId" value="{{ $vehicleId }}" />
                     <button id="delete-button"
-                        class="bg-transparent hover:bg-red-500 text-red-500 font-semibold hover:text-white py-1 px-4 border border-red-500 hover:border-transparent rounded-lg transition duration-300 ease-in-out">
+                        class="px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                         Delete
                     </button>
                 </form>
                 <button id="cancel-button"
-                    class="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-1 px-4 border border-blue-500 hover:border-transparent rounded-lg transition duration-300 ease-in-out">
+                    class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
                     Cancel
                 </button>
 
@@ -62,7 +61,7 @@
             });
         });
         $("#close-modal, #cancel-button").click(function() {
-            $("#modal").hide();
+            $("#deleteModal").hide();
         });
     });
 </script>

@@ -1,9 +1,18 @@
-<x-app-layout>
-
-    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg flex justify-center items-center max-w-lg my-20">
+<div id="createModal" class="modal fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50" data-aos="fade-down">
+    <!-- Modal content -->
+    <div id="modal-content" class="modal-content bg-white dark:bg-gray-800 shadow-xl px-1 rounded-lg">
+        <div class="flex justify-end">
+            <button id="close-modal" class="close cursor-pointer text-gray-400 hover:text-gray-500 focus:outline-none">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
         <div class="p-6 text-gray-900 dark:text-gray-100">
             <h2 class="block text-center mb-4">Create Vehicle</h2>
-            <form action="{{ route('vehicles.store') }}" method="POST">
+            <form action="{{ route('vehicles.store') }}" method="POST" id="createForm">
                 @csrf
                 <div class="mb-4">
                     <x-input-label for="make" :value="__('Make')" />
@@ -25,11 +34,43 @@
                     <x-input-label for="photos" :value="__('Photos')" />
                     <input type="file" class="form-control" id="photos" name="photos" />
                 </div>
-                <x-primary-button>
-                    {{ __('Submit') }}
-                </x-primary-button>
+                <div class="flex justify-center space-x-4">
+                    <button id="create-button"
+                        class="px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                        Create
+                    </button>
+                    <button id="cancel-button"
+                        class="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
+                        Cancel
+                    </button>
+                </div>
             </form>
         </div>
     </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $("#create-button").click(function(e) {
+            e.preventDefault();
+            var formData = new FormData($('#createForm')[0]);
 
-</x-app-layout>
+            $.ajax({
+                url: "{{ route('vehicles.store') }}",
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    window.location.reload();
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        });
+
+        $("#close-modal, #cancel-button").click(function() {
+            $("#createModal").hide();
+        });
+    });
+</script>

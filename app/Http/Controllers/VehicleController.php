@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Type\Integer;
 
 class VehicleController extends Controller
 {
@@ -14,8 +15,7 @@ class VehicleController extends Controller
      */
     public function index()
     {
-        $vehicles = Vehicle::paginate(10);
-        return view('admin.vehicles.listVehicles', compact('vehicles'));
+        return view('admin.vehicles.listVehicles');
     }
 
     /**
@@ -95,8 +95,6 @@ class VehicleController extends Controller
         $vehicle = Vehicle::findOrFail($vehicleId);
 
         $vehicle->delete();
-
-        // return redirect()->route('admin.vehicles.listVehicles')->with('success', 'Vehicle deleted successfully.');
     }
 
     /**
@@ -108,5 +106,41 @@ class VehicleController extends Controller
     public function showDelete($vehicleId)
     {
         return view('admin.modals.deleteVehicle', compact('vehicleId'));
+    }
+
+    /**
+     * Search for vehicles based on their make, model, fuel type or registration.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
+    public function search(Request $request)
+    {
+        $output = '';
+        $query = $request->input('query');
+
+        $vehicles = Vehicle::where('make', 'like', "%$query%")
+            ->orWhere('model', 'like', "%$query%")
+            ->orWhere('fuelType', 'like', "%$query%")
+            ->orWhere('registration', 'like', "%$query%")
+            ->paginate(10);
+
+
+        $total_rows = (int) $vehicles->count();
+        if ($total_rows > 0) {
+        } else {
+            $output = '
+                <tr>
+                    <td align="center" >No Data Found</td>
+                </tr>
+            ';
+        }
+
+
+
+        return response()->json([
+            'html' => view('admin.vehicles.partials.vehicleTable', compact('vehicles'))->render(),
+            'pagination' => (string) $vehicles->links()
+        ]);
     }
 }

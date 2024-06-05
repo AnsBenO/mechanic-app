@@ -12,94 +12,124 @@
                     <div class="py-6">
                         <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-200 mb-6">Manage Vehicles
                         </h1>
+
                         <div class="flex justify-center">
-                            <a href="{{ route('vehicles.create') }}"
+                            <button onclick="showCreateModal()"
                                 class="btn btn-primary py-2 px-6 rounded-md text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 hover:bg-blue-600 text-white hover:text-white shadow-md">
                                 Add New Vehicle
-                            </a>
+                            </button>
+                            <div class="createModalDiv">
+                                {{-- ? create modal form here --}}
+                            </div>
+                            <!-- Modal -->
+                            <div class="modalDiv">
+                            </div>
                         </div>
+                        <form action="{{ route('vehicles.search') }}" method="GET">
+                            @csrf
+                            <input type="text" name="query" placeholder="Search vehicles...">
+                            <button type="submit">Search</button>
+                        </form>
                     </div>
-
-                    @if ($vehicles->isEmpty())
-                        <p>No vehicles found.</p>
-                    @else
-                        <table class="table w-full border border-gray-300">
-                            <thead>
-                                <tr class="bg-gray-800 text-gray-200">
-                                    <th class="px-4 py-2 border-r border-gray-300">#</th>
-                                    <th class="px-4 py-2 border-r border-gray-300">Make</th>
-                                    <th class="px-4 py-2 border-r border-gray-300">Model</th>
-                                    <th class="px-4 py-2 border-r border-gray-300">Fuel Type</th>
-                                    <th class="px-4 py-2 border-r border-gray-300">Registration</th>
-                                    <th class="px-4 py-2">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($vehicles as $vehicle)
-                                    <tr class="hover:bg-gray-100 dark:hover:bg-gray-900">
-                                        <td class="px-4 py-2 border border-gray-300">{{ $vehicle->id }}</td>
-                                        <td class="px-4 py-2 border border-gray-300">{{ $vehicle->make }}</td>
-                                        <td class="px-4 py-2 border border-gray-300">{{ $vehicle->model }}</td>
-                                        <td class="px-4 py-2 border border-gray-300">{{ $vehicle->fuelType }}</td>
-                                        <td class="px-4 py-2 border border-gray-300">{{ $vehicle->registration }}</td>
-                                        <td class="px-4 py-2 flex justify-center gap-3">
-                                            <a href="{{ route('vehicles.edit', $vehicle) }}"
-                                                class="btn btn-sm btn-info inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-200">
-                                                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M14.707 4.293a1 1 0 010 1.414L6.414 14.414a1 1 0 01-1.414-1.414L13.293 4.293a1 1 0 011.414 0z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                                Edit
-                                            </a>
-
-                                            <button type="button"
-                                                class="btn btn-sm btn-danger inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-red-200"
-                                                onclick="showDeleteModal({{ $vehicle->id }})">
-                                                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M5.293 5.293a1 1 0 011.414 0L10 8.586l3.293-3.293a1 1 0 111.414 1.414L11.414 10l3.293 3.293a1 1 0 01-1.414 1.414L10 11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586 10 5.293 6.707a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                                Delete
-                                            </button>
-
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                <!-- Modal -->
-                                <div class="modalDiv">
-                                </div>
-                            </tbody>
-                        </table>
+                    <table class="table w-full border border-gray-300">
+                        <thead class="tableHead">
+                            <tr class="bg-gray-800 text-gray-200">
+                                <th class="px-4 py-2 border-r border-gray-300">#</th>
+                                <th class="px-4 py-2 border-r border-gray-300">Make</th>
+                                <th class="px-4 py-2 border-r border-gray-300">Model</th>
+                                <th class="px-4 py-2 border-r border-gray-300">Fuel Type</th>
+                                <th class="px-4 py-2 border-r border-gray-300">Registration</th>
+                                <th class="px-4 py-2">Actions</th>
+                            </tr>
+                        </thead>
+                        {{-- ? inserted tableBody here --}}
 
 
-                        <script>
-                            function showDeleteModal(vehicleId) {
-                                var modalContent = $(".modalDiv");
+
+                    </table>
+
+                    <script>
+                        {{-- ? show modal --}}
+
+                        function showCreateModal() {
+                            var modalContent = $(".createModalDiv");
+
+                            $.ajax({
+                                url: `/vehicles/create`,
+                                type: 'GET',
+                                success: function(response) {
+                                    modalContent.html(response);
+                                    $("#createModal").show();
+                                },
+                                error: function(error) {
+                                    console.error(error);
+                                }
+                            });
+
+                        }
+
+                        // Function to handle search
+                        function searchVehicles() {
+                            var query = $('input[name="query"]').val();
+                            var tHead = $('.tableHead');
+
+                            $.ajax({
+                                url: `/vehicles/search?query=${query}`,
+                                type: 'GET',
+                                success: function(response) {
+                                    tHead.after(response);
+                                },
+                                error: function(error) {
+                                    console.error(error);
+                                }
+                            });
+                        }
+
+                        // Call searchVehicles function on form submit
+                        $('form').submit(function(e) {
+                            e.preventDefault();
+                            searchVehicles();
+                        });
+
+                        $(document).ready(function() {
+                            searchVehicles('');
+                        });
+
+                        function showDeleteModal(vehicleId) {
+                            var modalContent = $(".modalDiv");
+                            console.log(vehicleId);
 
 
-                                $.ajax({
-                                    url: `/vehicles/delete/${vehicleId}`,
-                                    type: 'GET',
-                                    success: function(response) {
-                                        modalContent.html(response);
-                                        $("#modal").show();
-                                    },
-                                    error: function(error) {
-                                        console.error(error);
-                                    }
-                                });
-                            }
-                        </script>
-                        <div class="p-11">
+                            $.ajax({
+                                url: `/vehicles/delete/${vehicleId}`,
+                                type: 'GET',
+                                success: function(response) {
+                                    modalContent.html(response);
+                                    $("#deleteModal").show();
+                                },
+                                error: function(error) {
+                                    console.error(error);
+                                }
+                            });
+                        }
 
-                            {{ $vehicles->links() }}
-                        </div>
+                        function showEditModal(vehicleId) {
+                            var modalContent = $(".modalDiv");
 
-                    @endif
+                            $.ajax({
+                                url: `/vehicles/${vehicleId}/edit`,
+                                type: 'GET',
+                                success: function(response) {
+                                    modalContent.html(response);
+                                    $("#editModal").show();
+                                },
+                                error: function(error) {
+                                    console.error(error);
+                                }
+                            });
+
+                        }
+                    </script>
                 </div>
             </div>
         </div>
