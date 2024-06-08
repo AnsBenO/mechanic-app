@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Facade;
 
 return [
 
+    'available_locales' => ['en', 'fr'],
     /*
     |--------------------------------------------------------------------------
     | Application Name

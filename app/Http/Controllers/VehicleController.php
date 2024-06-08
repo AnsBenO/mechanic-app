@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\VehiclesImport;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
-use Ramsey\Uuid\Type\Integer;
+use Illuminate\Http\Response;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Facades\Excel;
 
 class VehicleController extends Controller
 {
@@ -15,7 +18,8 @@ class VehicleController extends Controller
      */
     public function index()
     {
-        return view('admin.vehicles.listVehicles');
+        $vehicles = Vehicle::paginate(10);
+        return view('admin.vehicles.listVehicles', compact('vehicles'));
     }
 
     /**
@@ -31,7 +35,7 @@ class VehicleController extends Controller
     /**
      * Store a newly created vehicle in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -47,13 +51,13 @@ class VehicleController extends Controller
 
         Vehicle::create($validatedData);
 
-        return redirect()->route('admin.vehicles.listVehicles')->with('success', 'Vehicle created successfully.');
+        return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle created successfully.');
     }
 
     /**
      * Show the form for editing the specified vehicle.
      *
-     * @param  \App\Models\Vehicle  $vehicle
+     * @param \App\Models\Vehicle $vehicle
      * @return \Illuminate\View\View
      */
     public function showEdit(Vehicle $vehicle)
@@ -64,8 +68,8 @@ class VehicleController extends Controller
     /**
      * Update the specified vehicle in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Vehicle  $vehicle
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Vehicle $vehicle
      * @return \Illuminate\Http\RedirectResponse
      */
     public function edit(Request $request, Vehicle $vehicle)
@@ -81,20 +85,21 @@ class VehicleController extends Controller
 
         $vehicle->update($validatedData);
 
-        return redirect()->route('admin.vehicles.listVehicles')->with('success', 'Vehicle updated successfully.');
+        return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle updated successfully.');
     }
 
     /**
      * Remove the specified vehicle from storage.
      *
-     * @param  int  $vehicleId
+     * @param int $vehicleId
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($vehicleId)
     {
         $vehicle = Vehicle::findOrFail($vehicleId);
-
         $vehicle->delete();
+
+        return redirect()->route('admin.vehicles.index')->with('success', 'Vehicle deleted successfully.');
     }
 
     /**
@@ -112,11 +117,10 @@ class VehicleController extends Controller
      * Search for vehicles based on their make, model, fuel type or registration.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\JsonResponse
      */
     public function search(Request $request)
     {
-        $output = '';
         $query = $request->input('query');
 
         $vehicles = Vehicle::where('make', 'like', "%$query%")
@@ -125,22 +129,39 @@ class VehicleController extends Controller
             ->orWhere('registration', 'like', "%$query%")
             ->paginate(10);
 
-
-        $total_rows = (int) $vehicles->count();
-        if ($total_rows > 0) {
-        } else {
-            $output = '
-                <tr>
-                    <td align="center" >No Data Found</td>
-                </tr>
-            ';
-        }
-
-
-
         return response()->json([
             'html' => view('admin.vehicles.partials.vehicleTable', compact('vehicles'))->render(),
             'pagination' => (string) $vehicles->links()
         ]);
+    }
+
+    public function showImportForm()
+    {
+        return view('admin.vehicles.importVehicles');
+    }
+
+    public function importVehicles(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|mimes:xls,xlsx'
+        ]);
+
+        Excel::import(new VehiclesImport, $request->file('excel_file'));
+
+        return redirect()->back()->with('success', 'Vehicles imported successfully!');
+    }
+    public function exportVehicles()
+    {
+        return Excel::download(new VehiclesExport, 'vehicles.xlsx');
+    }
+}
+class VehiclesExport implements FromCollection
+{
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function collection()
+    {
+        return Vehicle::all();
     }
 }

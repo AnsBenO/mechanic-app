@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <div
-        class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg flex justify-center items-center max-w-lg my-20">
+        class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg flex justify-center items-center max-w-lg my-20 z-50">
         <div class="p-6 text-gray-900 dark:text-gray-100">
             <h2 class="block text-center mb-4">Edit Client</h2>
             <form>

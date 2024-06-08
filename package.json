@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "alpinejs": "^3.13.8",
+        "chart.js": "^4.4.3",
         "jquery": "^3.7.1"
     }
 }
